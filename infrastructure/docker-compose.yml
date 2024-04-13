@@ -1,0 +1,35 @@
+﻿version: "3.8"
+
+services:
+  postgres:
+    container_name: postgres_todo
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=Zaqwsx1@
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=todo_db
+    networks:
+      - simple_todo
+  pgadmin:
+    container_name: pgadmin4_todo
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: fake-pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: Zaqwsx1@
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - ./docker/pgadmin:/var/lib/pgadmin
+    networks:
+      - simple_todo
+
+networks:
+  simple_todo:
+    driver: bridge

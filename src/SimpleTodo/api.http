@@ -1,0 +1,36 @@
+### Add new todo
+POST http://localhost:5238/todo
+Content-Type: application/json
+
+{
+  "title": "test 4",
+  "description": "test 4 desc"
+}
+
+> {% client.global.set("todo_id", response.body); %}
+
+### Get todo by ID
+GET http://localhost:5238/todo/{{todo_id}}
+Accept: application/json
+
+### Update todo content
+PATCH http://localhost:5238/todo
+Content-Type: application/json
+
+{
+  "id": "{{todo_id}}",
+  "title": "testX",
+  "description": "test X desc"
+}
+
+### Get todo list
+GET http://localhost:5238/todo?limit=4
+Accept: application/json
+
+### Finish todo
+POST http://localhost:5238/todo/{{todo_id}}/finish
+Content-Type: application/json
+
+### Remove todo
+DELETE http://localhost:5238/todo/{{todo_id}}
+Content-Type: application/json
