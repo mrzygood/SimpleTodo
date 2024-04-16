@@ -1,4 +1,5 @@
 ﻿### Roadmap
+
 - [x] Create simple TODO app's domain logic
 - [x] API endpoints *.rest file
 - [x] Database integration - PostgreSQL + auto-migration on app start
@@ -9,8 +10,17 @@
 - [ ] API Versioning
 
 ### EF Core commands
+
 ```
 dotnet ef migrations add <migration_name> -o ./Persistence/Migrations
 dotnet ef database update
 dotnet ef migrations remove
+```
+
+### Graylog
+
+To configure Graylog run following commands:
+```bash
+cd /infrastructure/graylog
+./scripts/graylog_setup.sh
 ```
