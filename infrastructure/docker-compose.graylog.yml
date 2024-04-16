@@ -1,0 +1,60 @@
+﻿version: "3.8"
+
+services:
+  mongo:
+    image: mongo:7.0.4
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./docker/mongo:/data/db
+    networks:
+      - infrastructure_simple_todo
+
+  opensearch:
+    image: opensearchproject/opensearch:2
+    container_name: opensearch
+    environment:
+      - plugins.security.disabled=true
+      - node.name=opensearch-node1
+      - bootstrap.memory_lock=true
+      - "discovery.type=single-node"
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./docker/opensearch:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600
+    networks:
+      - infrastructure_simple_todo
+  
+  graylog:
+    image: graylog/graylog:5.2.6
+    container_name: graylog
+    environment:
+      - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
+      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
+      - GRAYLOG_ELASTICSEARCH_HOSTS=http://opensearch:9200
+    ports:
+      - "9000:9000"
+      - "514:514"
+      - "514:514/udp"
+      - "12201:12201"
+      - "12201:12201/udp"
+    depends_on:
+      - mongo
+      - opensearch
+    networks:
+      - infrastructure_simple_todo
+
+networks:
+  infrastructure_simple_todo:
+    external: true
