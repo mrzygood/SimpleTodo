@@ -15,23 +15,14 @@ services:
     image: opensearchproject/opensearch:2
     container_name: opensearch
     environment:
-      - plugins.security.disabled=true
-      - node.name=opensearch-node1
-      - bootstrap.memory_lock=true
-      - "discovery.type=single-node"
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
+      - plugins.security.disabled=true # Enables anonymous access - for development only
+      - bootstrap.memory_lock=true # Prevents memory swapping on host machine which can dramatically decrease performance and stability
+      - "discovery.type=single-node" # Set because by default, OpenSearch forms a multi-node cluster
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # Sets the size of the Java heap
     volumes:
       - ./docker/opensearch:/usr/share/opensearch/data
     ports:
-      - 9200:9200
-      - 9600:9600
+      - 9200:9200 # REST API
     networks:
       - infrastructure_simple_todo
   
@@ -39,19 +30,19 @@ services:
     image: graylog/graylog:5.2.6
     container_name: graylog
     environment:
-      - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
-      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      - GRAYLOG_PASSWORD_SECRET=somepasswordpepper # Must be at least 16 characters
+      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918 # SHA256 hash of "admin" password
       - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
-      - GRAYLOG_ELASTICSEARCH_HOSTS=http://opensearch:9200
+      - GRAYLOG_ELASTICSEARCH_HOSTS=http://opensearch:9200 # Reference to the OpenSearch API
     ports:
-      - "9000:9000"
-      - "514:514"
-      - "514:514/udp"
-      - "12201:12201"
-      - "12201:12201/udp"
+      - "9000:9000" # Graylog web interface and REST API
+      - "12201:12201/udp" # GELF UDP input
     depends_on:
       - mongo
       - opensearch
+    volumes:
+      - ./docker/graylog/data:/usr/share/graylog/data/data"
+      - ./docker/graylog/journal:/usr/share/graylog/data/journal"
     networks:
       - infrastructure_simple_todo
 
