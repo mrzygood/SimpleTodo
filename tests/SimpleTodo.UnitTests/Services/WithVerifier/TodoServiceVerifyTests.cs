@@ -26,7 +26,7 @@ public class TodoServiceVerifyTests
             
         // Then
         var savedTodo = await _sut.Get(id);
-        await Verify(savedTodo);
+        await Verify(savedTodo).UseDirectory("Asserts");
     }
     
     [Fact]
@@ -46,7 +46,7 @@ public class TodoServiceVerifyTests
         
         // Then
         var updatedTodo = await _sut.Get(createdTodo.Id);
-        await Verify(updatedTodo);
+        await Verify(updatedTodo).UseDirectory("Asserts");
     }
 
     private async Task<TodoDto> CreateTodo()
