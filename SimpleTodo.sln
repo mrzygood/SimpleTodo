@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{73C41AC6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTodo.UnitTests", "tests\SimpleTodo.UnitTests\SimpleTodo.UnitTests.csproj", "{9F32C31B-C74C-467E-9D0A-BCEB50C188F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTodo.IntegrationTests", "tests\SimpleTodo.IntegrationTests\SimpleTodo.IntegrationTests.csproj", "{03EF1CD7-89D2-4A1E-8554-01E898AA4B3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,9 +35,14 @@ Global
 		{9F32C31B-C74C-467E-9D0A-BCEB50C188F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F32C31B-C74C-467E-9D0A-BCEB50C188F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F32C31B-C74C-467E-9D0A-BCEB50C188F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03EF1CD7-89D2-4A1E-8554-01E898AA4B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03EF1CD7-89D2-4A1E-8554-01E898AA4B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03EF1CD7-89D2-4A1E-8554-01E898AA4B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03EF1CD7-89D2-4A1E-8554-01E898AA4B3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F2F7E107-C630-435A-BDFD-BFC3FCA16314} = {CDC886A0-CEA1-47CE-87ED-D34A41B09E52}
 		{9F32C31B-C74C-467E-9D0A-BCEB50C188F0} = {73C41AC6-9048-49DA-B4E6-4ACA6596BC7A}
+		{03EF1CD7-89D2-4A1E-8554-01E898AA4B3E} = {73C41AC6-9048-49DA-B4E6-4ACA6596BC7A}
 	EndGlobalSection
 EndGlobal
