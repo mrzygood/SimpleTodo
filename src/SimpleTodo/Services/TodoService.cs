@@ -10,7 +10,7 @@ public interface ITodoService
     Task Update(UpdateTodoDto dto);
     Task Finish(Guid id);
     Task Remove(Guid id);
-    Task<TodoDto> Get(Guid id, CancellationToken ct = default);
+    Task<TodoDto?> Get(Guid id, CancellationToken ct = default);
     Task<ICollection<TodoDto>> Get(int limit, CancellationToken ct = default);
 }
 
@@ -65,9 +65,15 @@ public sealed class TodoService : ITodoService
     public async Task Remove(Guid id)
     {
         var entity = await _repository.Get(id, CancellationToken.None);
-        if (entity!.RemovedAt is not null)
+        if (entity?.RemovedAt is not null)
         {
             _logger.LogInformation("Todo {Id} already removed", entity.Id);
+            return;
+        }
+
+        if (entity is null)
+        {
+            _logger.LogInformation("Todo {Id} tried to be removed but not exists", id);
             return;
         }
         
@@ -76,12 +82,17 @@ public sealed class TodoService : ITodoService
         _logger.LogInformation("Todo {Id} removed", entity.Id);
     }
 
-    public async Task<TodoDto> Get(Guid id, CancellationToken ct = default)
+    public async Task<TodoDto?> Get(Guid id, CancellationToken ct = default)
     {
         var entity = await _repository.Get(id, ct);
+        if (entity is null)
+        {
+            return null;
+        }
+        
         return new TodoDto
         {
-            Id = entity!.Id,
+            Id = entity.Id,
             Title = entity.Title,
             Description = entity.Description,
             DoneAt = entity.DoneAt,

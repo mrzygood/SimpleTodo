@@ -3,17 +3,6 @@ using SimpleTodo.Entities;
 
 namespace SimpleTodo.Persistence;
 
-public interface ITodoRepository
-{
-    Task Add(Todo todo);
-    Task Update(Todo todo);
-    Task<Todo?> Get(Guid id, CancellationToken ct = default);
-    Task<ICollection<Todo>> Get(
-        int page,
-        int rowsPerPage,
-        CancellationToken ct = default);
-}
-
 public class TodoRepository : ITodoRepository
 {
     private readonly TodoDbContext _context;
@@ -37,7 +26,9 @@ public class TodoRepository : ITodoRepository
 
     public async Task<Todo?> Get(Guid id, CancellationToken ct = default)
     {
-        return await _context.Todos.FirstOrDefaultAsync(x => x.Id == id, cancellationToken: ct);
+        return await _context
+            .Todos
+            .FirstOrDefaultAsync(x => x.Id == id && x.RemovedAt == null, ct);
     }
 
     public async Task<ICollection<Todo>> Get(
@@ -50,6 +41,7 @@ public class TodoRepository : ITodoRepository
             .OrderByDescending(x => x.CreatedAt)
             .Skip(page * rowsPerPage)
             .Take(rowsPerPage)
+            .Where(x => x.RemovedAt == null)
             .ToListAsync(cancellationToken: ct);
     }
 }
