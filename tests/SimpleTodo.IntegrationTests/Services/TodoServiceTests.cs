@@ -24,6 +24,29 @@ public sealed class TodoServiceTests : BaseIntegrationTest
         savedTodo!.Title.ShouldBe(addedTodo.Title);
         savedTodo.Description.ShouldBe(addedTodo.Description);
     }
+    
+    
+    [Fact]
+    public async Task ShouldUpdateTodo()
+    {
+        // Given
+        var sut = GetDependency<ITodoService>();
+        var addedTodo = await CreateTodo(sut);
+        var todoToUpdate = new UpdateTodoDto
+        {
+            Id = addedTodo.Id,
+            Title = "Test title 2",
+            Description = "Test description 2"
+        };
+
+        // When
+        await sut.Update(todoToUpdate);
+        
+        // Then
+        var updatedTodo = await sut.Get(addedTodo.Id);
+        updatedTodo!.Title.ShouldBe(todoToUpdate.Title);
+        updatedTodo.Description.ShouldBe(todoToUpdate.Description);
+    }
 
     private async Task<TodoDto> CreateTodo(ITodoService service)
     {
