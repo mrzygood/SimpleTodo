@@ -3,11 +3,13 @@ using SimpleTodo.Services;
 
 namespace SimpleTodo.IntegrationTests.Services;
 
-public sealed class TodoServiceTests : BaseIntegrationTest
+public sealed class TodoServiceTests : BaseIntegrationTest, IClassFixture<SimpleTodoAppFactory>, IAsyncLifetime
 {
-    public TodoServiceTests(SimpleTodoAppFactory assetsWalletAppFactory)
-        : base(assetsWalletAppFactory)
+    private readonly SimpleTodoAppFactory _simpleTodoAppFactory;
+
+    public TodoServiceTests(SimpleTodoAppFactory simpleTodoAppFactory) : base(simpleTodoAppFactory)
     {
+        _simpleTodoAppFactory = simpleTodoAppFactory;
     }
     
     [Fact]
@@ -25,7 +27,6 @@ public sealed class TodoServiceTests : BaseIntegrationTest
         savedTodo.Description.ShouldBe(addedTodo.Description);
     }
     
-    
     [Fact]
     public async Task ShouldUpdateTodo()
     {
@@ -38,7 +39,7 @@ public sealed class TodoServiceTests : BaseIntegrationTest
             Title = "Test title 2",
             Description = "Test description 2"
         };
-
+    
         // When
         await sut.Update(todoToUpdate);
         
@@ -60,4 +61,8 @@ public sealed class TodoServiceTests : BaseIntegrationTest
 
         return todo!;
     }
+
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    public async Task DisposeAsync() => await _simpleTodoAppFactory.ResetDatabase();
 }

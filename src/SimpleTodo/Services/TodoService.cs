@@ -1,4 +1,5 @@
-﻿using SimpleTodo.Entities;
+﻿using System.Runtime.CompilerServices;
+using SimpleTodo.Entities;
 using SimpleTodo.Exceptions;
 using SimpleTodo.Persistence;
 

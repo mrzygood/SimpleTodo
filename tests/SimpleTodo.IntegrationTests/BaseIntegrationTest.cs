@@ -2,7 +2,7 @@
 
 namespace SimpleTodo.IntegrationTests;
 
-public abstract class BaseIntegrationTest(SimpleTodoAppFactory simpleTodoAppFactory) : IClassFixture<SimpleTodoAppFactory>
+public abstract class BaseIntegrationTest(SimpleTodoAppFactory simpleTodoAppFactory)
 {
     private readonly IServiceScope _serviceScope = simpleTodoAppFactory.Services.CreateScope();
 
