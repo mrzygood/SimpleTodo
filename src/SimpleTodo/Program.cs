@@ -18,6 +18,19 @@ builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
+const string CorsPolicyName = "TodoDefault"; 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: CorsPolicyName,
+        policyBuilder =>
+        {
+            policyBuilder
+                .WithOrigins("http://localhost:8080")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -66,5 +79,7 @@ using (var scope = app.Services.CreateScope())
         .GetRequiredService<TodoDbContext>();
     await administrationDbContext.Database.MigrateAsync();
 }
+
+app.UseCors(CorsPolicyName);
 
 app.Run();
