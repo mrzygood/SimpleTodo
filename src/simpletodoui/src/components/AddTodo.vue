@@ -16,9 +16,7 @@ import TodoApiClient from "@/apiClients/todoApiClient"
 
 export default defineComponent({
   name: "AddTodo",
-  props: {
-    msg: String,
-  },
+  props: {},
   data() {
     return {
       todo: {

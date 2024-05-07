@@ -1,6 +1,7 @@
 ﻿import http from "@/apiClients/http-common";
 import { CreateTodoRequest } from "./models/createTodoRequest"
 import { UpdateTodoRequest } from "./models/updateTodoRequest"
+import { TodoDto } from "./models/todoDto"
 
 class TodoApiClient {
     getAll(): Promise<any> {
