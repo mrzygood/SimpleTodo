@@ -15,6 +15,8 @@ services:
       - POSTGRES_DB=todo_db
     networks:
       - simple_todo
+    healthcheck:
+      test: "exit 0"
   pgadmin:
     container_name: pgadmin4_todo
     image: dpage/pgadmin4
@@ -27,6 +29,29 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
       - ./docker/pgadmin:/var/lib/pgadmin
+    networks:
+      - simple_todo
+  auth:
+    image: quay.io/keycloak/keycloak:24.0.3
+    ports:
+      - "8085:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=Zaqwsx1@
+      - KC_DB=postgres
+      - KC_DB_SCHEMA=public
+      - KC_DB_URL_HOST=postgres
+      - KC_DB_URL_DATABASE=keycloak
+      - KC_DB_URL_PORT=5432
+      - KC_DB_USERNAME=admin
+      - KC_DB_PASSWORD=Zaqwsx1@
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - start-dev
+    volumes:
+      - ./docker/keycloak/import:/opt/keycloak/data/import
     networks:
       - simple_todo
 

@@ -7,7 +7,7 @@
       <nav>
         <router-link to="/">Home</router-link> |
         <router-link to="/about">About</router-link> |
-        <router-link to="/about">Login</router-link>
+        <a @click="login">Login</a>
       </nav>
     </div>
   </div>
@@ -15,9 +15,25 @@
 
 <script lang="ts">
 import {defineComponent} from "vue";
+import KeyCloakService from "@/auth/KeycloakService";
 
 export default defineComponent({
-  name: "TopPanel"
+  name: "TopPanel",
+  methods: {
+    async login() {
+      await KeyCloakService.CallLogin();
+    },
+    async logout() {
+      await KeyCloakService.CallLogout();
+    },
+    async getInfo() {
+      await KeyCloakService.GetUser();
+      await KeyCloakService.GetBearerToken();
+    }
+  },
+  async mounted() {
+    KeyCloakService.Init();
+  }
 });
 </script>
 
