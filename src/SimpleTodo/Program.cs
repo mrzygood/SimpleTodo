@@ -1,5 +1,9 @@
+using Keycloak.AuthServices.Authentication;
+using Keycloak.AuthServices.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using SimpleTodo.Persistence;
 using SimpleTodo.Services;
@@ -31,6 +35,50 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
+builder.Services
+    .AddAuthorization();
+
+builder.Services
+    .AddAuthorization();
+    // .AddKeycloakAuthorization(builder.Configuration);
+
+// builder.Services
+//     .AddAuthentication()
+//     .AddJwtBearer(x =>
+//     {
+//         x.Authority = "http://localhost:8085/realms/SimpleTodo";
+//         x.RequireHttpsMetadata = false;
+//         x.MetadataAddress = "http://localhost:8085/realms/SimpleTodo/.well-known/openid-configuration";
+//         // x.TokenValidationParameters = new TokenValidationParameters
+//         // {
+//         //     ValidAudience = "simple-todo-ui"
+//         // };
+//         x.SaveToken = true;
+//         x.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuer = false,
+//             // NOTE: Usually you don't need to set the issuer since the middleware will extract it 
+//             // from the .well-known endpoint provided above. but since I am using the container name in
+//             // the above URL which is not what is published issueer by the well-known, I'm setting it here.
+//             // ValidIssuer = "http://localhost:8080/auth/realms/AuthDemoRealm", 
+//             // ValidAudience = "auth-demo-web-api",
+//             // ValidateAudience = true,
+//             // ValidateLifetime = true,
+//             // ValidateIssuerSigningKey = true,
+//             // ClockSkew = TimeSpan.FromMinutes(1)
+//         };
+//     });
+//
+// builder.Services
+//     .AddAuthorization(o =>
+//     {
+//         o.DefaultPolicy = new AuthorizationPolicyBuilder()
+//             .RequireAuthenticatedUser()
+//             // .RequireClaim("email_verified", "true")
+//             .Build();
+//     });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,13 +90,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapGet("/todo/{id}", ([FromServices] ITodoService todoService, Guid id) => todoService.Get(id))
     .WithName("GetTodo")
     .WithOpenApi();
 
 app.MapGet("/todo", ([FromServices] ITodoService todoService, int limit) => todoService.Get(limit))
     .WithName("GetTodoList")
-    .WithOpenApi();
+    .WithOpenApi()
+    .RequireAuthorization();
 
 app.MapPost("/todo", async ([FromServices] ITodoService todoService, CreateTodoDto todo) =>
     {

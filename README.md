@@ -16,6 +16,10 @@ dotnet ef database update
 dotnet ef migrations remove
 ```
 
+# Auth
+- Install package `Microsoft.AspNetCore.Authentication.JwtBearer`
+- Install package `System.IdentityModel.Tokens.Jwt`
+
 ### Keycloak
 
 #### Keycloak setup

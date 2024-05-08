@@ -1,7 +1,8 @@
 <template>
   <h2>Your todos</h2>
+  <button @click="fetchAllTodos">Refresh</button>
   <div class="todo-list">
-    <div class="todo-list-entry" v-for="todo in todos">
+    <div class="todo-list-entry" v-for="todo in todos" :key="todo.id">
       {{ todo.title }}
     </div>
   </div>
@@ -17,13 +18,22 @@ export default defineComponent({
   props: {},
   data() {
     return {
-      todos: [] as TodoDto[]
+      todos: [] as TodoDto[],
     };
   },
+  methods: {
+    async fetchAllTodos() {
+      try {
+        const result = await TodoApiClient.getAll();
+        this.todos = result.data as TodoDto[];
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
   async mounted() {
-    const result = await TodoApiClient.getAll();
-    this.todos = result.data as TodoDto[];
-  }
+    await this.fetchAllTodos();
+  },
 });
 </script>
 
