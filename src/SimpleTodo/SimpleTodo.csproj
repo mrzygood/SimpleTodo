@@ -28,6 +28,7 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+        <PackageReference Include="VaultSharp.Extensions.Configuration" Version="1.0.3" />
     </ItemGroup>
 
     <ItemGroup>
