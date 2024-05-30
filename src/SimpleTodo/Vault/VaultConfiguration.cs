@@ -1,4 +1,4 @@
-﻿namespace MagicHat.Vault.Configuration;
+﻿namespace SimpleTodo.Vault;
 
 public sealed class VaultConfiguration
 {
@@ -21,4 +21,6 @@ public sealed class VaultConfiguration
     public string UserName { get; set; }
     public string Password { get; set; }
     public bool LoadConfiguration { get; set; }
+    public bool ConfigRefreshEnabled { get; set; }
+    public int ConfigRefreshInterval { get; set; }
 }

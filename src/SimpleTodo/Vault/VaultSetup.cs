@@ -1,5 +1,4 @@
-﻿using MagicHat.Vault.Configuration;
-using VaultSharp.Extensions.Configuration;
+﻿using VaultSharp.Extensions.Configuration;
 using VaultSharp.V1.AuthMethods;
 using VaultSharp.V1.AuthMethods.Token;
 using VaultSharp.V1.AuthMethods.UserPass;
@@ -37,10 +36,17 @@ public static class VaultSetup
             configurationBuilder.AddVaultConfiguration(
                 () => new VaultOptions(
                     vaultConfig.Url,
-                    authMethod),
+                    authMethod,
+                    reloadOnChange: vaultConfig.ConfigRefreshEnabled,
+                    reloadCheckIntervalSeconds: vaultConfig.ConfigRefreshInterval),
                 vaultConfig.BasePath,
                 mountPoint: vaultConfig.MountPoint
             );
+
+            if (vaultConfig.ConfigRefreshEnabled)
+            {
+                services.AddHostedService<VaultChangeWatcher>();
+            }
         }
         
         return services;
