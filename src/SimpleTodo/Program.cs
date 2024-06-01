@@ -15,7 +15,7 @@ builder.Services.AddDbContext<TodoDbContext>(options => {
 
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 builder.Services.AddScoped<ITodoService, TodoService>();
-builder.Services.AddVault(builder.Configuration, builder.Configuration);
+builder.Services.AddVault(builder.Configuration);
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));

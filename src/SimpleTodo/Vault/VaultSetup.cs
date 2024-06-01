@@ -10,16 +10,14 @@ public static class VaultSetup
     public static IServiceCollection AddVault(
         this IServiceCollection services,
         IConfigurationBuilder configurationBuilder,
-        IConfiguration configuration,
         string configurationSectionName = "Vault")
     {
         if (string.IsNullOrWhiteSpace(configurationSectionName))
         {
-            throw new Exception("Vault config not found");
+            throw new MissingVaultConfigurationException(configurationSectionName);
         }
 
-        var vaultConfig = GetSection<VaultConfiguration>(configuration, configurationSectionName);
-        services.AddSingleton(configuration);
+        var vaultConfig = GetSection<VaultConfiguration>(configurationBuilder.Build(), configurationSectionName);
 
         if (vaultConfig.LoadConfiguration)
         {

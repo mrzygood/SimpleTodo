@@ -5,14 +5,6 @@ public sealed class VaultConfiguration
     public VaultConfiguration()
     {
     }
-    
-    public VaultConfiguration(string url, string token, string basePath, string mountPoint)
-    {
-        Url = url;
-        Token = token;
-        BasePath = basePath;
-        MountPoint = mountPoint;
-    }
 
     public string Url { get; set; }
     public string Token { get; set; }
