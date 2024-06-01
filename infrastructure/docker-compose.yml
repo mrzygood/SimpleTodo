@@ -1,6 +1,4 @@
-﻿version: "3.9"
-
-services:
+﻿services:
   postgres:
     container_name: postgres_todo
     image: postgres
@@ -33,3 +31,4 @@ services:
 networks:
   simple_todo:
     driver: bridge
+    attachable: true
