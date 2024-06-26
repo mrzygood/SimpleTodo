@@ -3,20 +3,16 @@
     image: hashicorp/vault:1.16
     container_name: vault
     ports:
-      - "8201:8201"
       - "8200:8200"
     environment:
-      VAULT_ADDR: 'http://127.0.0.1:8201'
-      VAULT_LOCAL_CONFIG: '{"listener": [{"tcp":{"address": "0.0.0.0:8201","tls_disable":"1"}}], "default_lease_ttl": "168h", "max_lease_ttl": "720h", "ui": true}'
-      VAULT_DEV_ROOT_TOKEN_ID: 'secret-token'
-      VAULT_TOKEN: 'secret-token'
+      VAULT_LOCAL_CONFIG: '{"storage": {"file": {"path": "/vault/data"}}, "listener": [{"tcp": { "address": "0.0.0.0:8200", "tls_disable": true}}], "api_addr": "http://0.0.0.0:8200", "default_lease_ttl": "168h", "max_lease_ttl": "720h", "ui": true}' # will be saved in local.json file in mounted directory, config can be added directly in mounted directory's file
     cap_add:
       - IPC_LOCK
     volumes:
       - ./docker/vault/data:/vault/file
       - ./docker/vault/config:/vault/config
       - ./docker/vault/logs:/vault/logs
-    command: server -dev -dev-root-token-id="00000000-0000-0000-0000-000000000000"
+    command: server
     networks:
       - simple_todo
 
