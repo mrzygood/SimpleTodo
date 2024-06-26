@@ -1,0 +1,32 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deploy
+  labels:
+    name: postgres-deploy
+    app: todo-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: database
+      app: todo-app
+  template:
+    metadata:
+      name: postgres-pod
+      labels:
+        tier: database
+        app: todo-app
+    spec:
+      containers:
+      - name: postgres
+        image: postgres
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: todo_db
+        - name: POSTGRES_USER
+          value: admin
+        - name: POSTGRES_PASSWORD
+          value: Zaqwsx1@

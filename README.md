@@ -14,3 +14,8 @@ dotnet ef migrations add <migration_name> -o ./Persistence/Migrations
 dotnet ef database update
 dotnet ef migrations remove
 ```
+
+
+
+docker tag local-image:tagname new-repo:tagname
+docker push new-repo:tagname

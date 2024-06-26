@@ -1,23 +1,17 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
+﻿# Use the official Microsoft .NET 8 SDK image for the build stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["src/SimpleTodo/SimpleTodo.csproj", "src/SimpleTodo/"]
-RUN dotnet restore "src/SimpleTodo/SimpleTodo.csproj"
-COPY . .
-WORKDIR "/src/src/SimpleTodo"
-RUN dotnet build "SimpleTodo.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Copy csproj and restore any dependencies (via NuGet)
+COPY *.csproj ./
+RUN dotnet restore
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "SimpleTodo.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Copy the project files and build the release
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-FROM base AS final
+# Generate the runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "SimpleTodo.dll"]

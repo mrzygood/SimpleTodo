@@ -1,5 +1,7 @@
+
+
 ### Add new todo
-POST http://localhost:5238/todo
+POST http://192.168.73.251:30004/todo
 Content-Type: application/json
 
 {
