@@ -9,7 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TodoDbContext>(options => {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("TodoConnection"));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("TodoConnection"),
+        pgSqlBuilder => {
+            pgSqlBuilder.MigrationsHistoryTable("__EFMigrationsHistory", TodoDbContext.SchemaName);
+        });
 });
 
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();

@@ -5,6 +5,8 @@ namespace SimpleTodo.Persistence;
 
 public sealed class TodoDbContext: DbContext
 {
+    public const string SchemaName = "todo";
+    
     public DbSet<Todo> Todos { get; set; }
     
     public TodoDbContext(DbContextOptions<TodoDbContext> options) : base(options) {}
@@ -12,7 +14,7 @@ public sealed class TodoDbContext: DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.HasDefaultSchema("todo");
+        modelBuilder.HasDefaultSchema(SchemaName);
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }
