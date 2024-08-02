@@ -15,4 +15,5 @@ public sealed class VaultConfiguration
     public bool LoadConfiguration { get; set; }
     public bool ConfigRefreshEnabled { get; set; }
     public int ConfigRefreshInterval { get; set; }
+    public ICollection<DynamicCredentialsEntry> DynamicCredentials { get; set; }
 }

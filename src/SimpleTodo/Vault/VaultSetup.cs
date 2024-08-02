@@ -1,4 +1,6 @@
-﻿using VaultSharp.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration.Memory;
+using VaultSharp;
+using VaultSharp.Extensions.Configuration;
 using VaultSharp.V1.AuthMethods;
 using VaultSharp.V1.AuthMethods.Token;
 using VaultSharp.V1.AuthMethods.UserPass;
@@ -19,18 +21,18 @@ public static class VaultSetup
 
         var vaultConfig = GetSection<VaultConfiguration>(configurationBuilder.Build(), configurationSectionName);
 
+        AbstractAuthMethodInfo authMethod;
+        if (string.IsNullOrWhiteSpace(vaultConfig.Token))
+        {
+            authMethod = new UserPassAuthMethodInfo(vaultConfig.UserName, vaultConfig.Password);
+        }
+        else
+        {
+            authMethod = new TokenAuthMethodInfo(vaultConfig.Token);
+        }
+        
         if (vaultConfig.LoadConfiguration)
         {
-            AbstractAuthMethodInfo authMethod;
-            if (string.IsNullOrWhiteSpace(vaultConfig.Token))
-            {
-                authMethod = new UserPassAuthMethodInfo(vaultConfig.UserName, vaultConfig.Password);
-            }
-            else
-            {
-                authMethod = new TokenAuthMethodInfo(vaultConfig.Token);
-            }
-            
             configurationBuilder.AddVaultConfiguration(
                 () => new VaultOptions(
                     vaultConfig.Url,
@@ -46,10 +48,44 @@ public static class VaultSetup
                 services.AddHostedService<VaultChangeWatcher>();
             }
         }
+
+        var dynamicCredentials = vaultConfig.DynamicCredentials.First();
+        var vaultClientSettings = new VaultClientSettings(vaultConfig.Url, authMethod);
+        IVaultClient vaultClient = new VaultClient(vaultClientSettings);
+        var result = vaultClient
+            .V1.Secrets.Database
+            .GetCredentialsAsync(dynamicCredentials.RoleName, dynamicCredentials.MountPoint)
+            .GetAwaiter().GetResult();
+        var data = result.Data;
+
+        var replacedSetting = dynamicCredentials
+            .ValueTemplate
+            .Replace("{{user}}", data.Username)
+            .Replace("{{password}}", data.Password);
+
+        var configToReplace = new Dictionary<string, string>
+        {
+            { dynamicCredentials.ConfigSectionToReplace, replacedSetting }
+        };
+        
+        var source = new MemoryConfigurationSource { InitialData = configToReplace };
+        configurationBuilder.Add(source);
         
         return services;
     }
-    
+
+    public static IServiceCollection AddVault2(
+        this IServiceCollection services,
+        IConfigurationBuilder configurationBuilder,
+        string configurationSectionName = "Vault")
+    {
+        IAuthMethodInfo authMethod = new TokenAuthMethodInfo("MY_VAULT_TOKEN");
+        var vaultClientSettings = new VaultClientSettings("https://MY_VAULT_SERVER:8200", authMethod);
+        IVaultClient vaultClient = new VaultClient(vaultClientSettings);
+        var result = vaultClient.V1.Secrets.Database.GetCredentialsAsync("todo-app-role", "todo-postgresql").GetAwaiter().GetResult();
+        return services;
+    }
+
     private static T GetSection<T>(IConfiguration configuration, string sectionName) where T : class, new()
     {
         var section = configuration.GetRequiredSection(sectionName);
