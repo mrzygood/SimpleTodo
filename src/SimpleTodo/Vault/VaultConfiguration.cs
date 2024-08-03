@@ -11,4 +11,6 @@ public sealed class VaultConfiguration
     public string BasePath { get; set; }
     public string MountPoint { get; set; }
     public bool LoadConfiguration { get; set; }
+    public string AppRoleId { get; set; }
+    public string AppRoleSecretId { get; set; }
 }

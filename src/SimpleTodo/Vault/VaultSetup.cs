@@ -1,4 +1,6 @@
 ﻿using VaultSharp.Extensions.Configuration;
+using VaultSharp.V1.AuthMethods;
+using VaultSharp.V1.AuthMethods.AppRole;
 using VaultSharp.V1.AuthMethods.Token;
 
 namespace SimpleTodo.Vault;
@@ -17,10 +19,18 @@ public static class VaultSetup
 
         var vaultConfig = GetSection<VaultConfiguration>(configurationBuilder.Build(), configurationSectionName);
 
+        AbstractAuthMethodInfo authMethod;
+        if (string.IsNullOrWhiteSpace(vaultConfig.Token))
+        {
+            authMethod = new AppRoleAuthMethodInfo(vaultConfig.AppRoleId, vaultConfig.AppRoleSecretId);
+        }
+        else
+        {
+            authMethod = new TokenAuthMethodInfo(vaultConfig.Token);
+        }
+        
         if (vaultConfig.LoadConfiguration)
         {
-            var authMethod = new TokenAuthMethodInfo(vaultConfig.Token);
-            
             configurationBuilder.AddVaultConfiguration(
                 () => new VaultOptions(
                     vaultConfig.Url,

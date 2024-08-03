@@ -29,6 +29,22 @@ services:
       - ./docker/pgadmin:/var/lib/pgadmin
     networks:
       - simple_todo
+  vault:
+    image: hashicorp/vault:1.16
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_LOCAL_CONFIG: '{"storage": {"file": {"path": "/vault/data"}}, "listener": [{"tcp": { "address": "0.0.0.0:8200", "tls_disable": true}}], "api_addr": "http://0.0.0.0:8200", "default_lease_ttl": "168h", "max_lease_ttl": "720h", "ui": true}' # will be saved in local.json file in mounted directory, config can be added directly in mounted directory's file
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./docker/vault/data:/vault/file
+      - ./docker/vault/config:/vault/config
+      - ./docker/vault/logs:/vault/logs
+    command: server
+    networks:
+      - simple_todo
 
 networks:
   simple_todo:
