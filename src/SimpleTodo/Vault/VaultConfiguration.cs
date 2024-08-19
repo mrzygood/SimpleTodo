@@ -1,4 +1,6 @@
-﻿namespace SimpleTodo.Vault;
+﻿using SimpleTodo.Vault.DynamicCredentials;
+
+namespace SimpleTodo.Vault;
 
 public sealed class VaultConfiguration
 {
@@ -13,4 +15,5 @@ public sealed class VaultConfiguration
     public bool LoadConfiguration { get; set; }
     public string AppRoleId { get; set; }
     public string AppRoleSecretId { get; set; }
+    public ICollection<DynamicCredentialsEntry> DynamicCredentials { get; set; }
 }

@@ -23,7 +23,7 @@ builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.AddVault(builder.Configuration);
+await builder.Services.AddVault(builder.Configuration);
 
 var app = builder.Build();
 
